@@ -1,44 +1,50 @@
 {
   "maxDate": "2023-12-31",
   "kundenGesamt": 49000,
-  "inaktiveVips": 22,
-  "verlorenerUmsatz": 3462987.73,
+  "inaktiveVips": 24,
+  "verlorenerUmsatz": 3762959.75,
   "reportUmsatz": [
     {
-      "umsatz_segment": "Standard",
-      "anzahl_kunden": 19288.0,
-      "segment_umsatz": 2474190574.36,
-      "avg_umsatz": 128276.16
-    },
-    {
-      "umsatz_segment": "Gering",
-      "anzahl_kunden": 14668.0,
-      "segment_umsatz": 1614404925.93,
-      "avg_umsatz": 110063.06
+      "umsatz_segment": "VIP",
+      "anzahl_kunden": 5358.0,
+      "segment_umsatz": 846884935.0,
+      "avg_umsatz": 158059.9,
+      "umsatz_anteil_prozent": 13.41
     },
     {
       "umsatz_segment": "Premium",
       "anzahl_kunden": 9686.0,
       "segment_umsatz": 1379422927.54,
-      "avg_umsatz": 142414.1
+      "avg_umsatz": 142414.1,
+      "umsatz_anteil_prozent": 21.84
     },
     {
-      "umsatz_segment": "VIP",
-      "anzahl_kunden": 5358.0,
-      "segment_umsatz": 846884935.0,
-      "avg_umsatz": 158059.9
+      "umsatz_segment": "Standard",
+      "anzahl_kunden": 19288.0,
+      "segment_umsatz": 2474190574.36,
+      "avg_umsatz": 128276.16,
+      "umsatz_anteil_prozent": 39.18
+    },
+    {
+      "umsatz_segment": "Gering",
+      "anzahl_kunden": 14668.0,
+      "segment_umsatz": 1614404925.93,
+      "avg_umsatz": 110063.06,
+      "umsatz_anteil_prozent": 25.56
     }
   ],
   "reportAktivitaet": [
     {
       "aktivitaet_segment": "Aktiv",
       "anzahl_kunden": 48374.0,
-      "segment_umsatz": 6237774694.06
+      "segment_umsatz": 6237774694.06,
+      "avg_umsatz": 128948.91
     },
     {
       "aktivitaet_segment": "Inaktiv",
       "anzahl_kunden": 626.0,
-      "segment_umsatz": 77128668.77
+      "segment_umsatz": 77128668.77,
+      "avg_umsatz": 123208.74
     }
   ],
   "reportDach": [
