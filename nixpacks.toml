@@ -6,63 +6,16 @@ nixPkgs = ["python311", "openjdk17", "nodejs_20"]
 
 [phases.install]
 cmds = [
-  "pip install -r backend_requirements.txt",
-  "npm ci"
+  "pip install -r backend/backend_requirements.txt",
+  "cd frontend && npm ci"
 ]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["cd frontend && npm run build"]
 
 [start]
-cmd = "gunicorn --bind 0.0.0.0:$PORT --timeout 300 --workers 2 backend_server:app"
+cmd = "cd backend && gunicorn --bind 0.0.0.0:$PORT --timeout 300 --workers 2 backend_server:app"
 
 [variables]
 PYTHONUNBUFFERED = "1"
 NODE_ENV = "production"
-
-# Dependencies
-node_modules/
-package-lock.json
-
-# Build outputs
-dist/
-build/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-*.egg-info/
-.eggs/
-
-# IDEs
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Spark/BigData
-spark-warehouse/
-metastore_db/
-derby.log
-
-# Lokale Ergebnisse (optional - diese NICHT pushen wenn zu groß)
-ergebnisse/
-
-# Persönliche Pfade (diese Datei nicht in Git!)
-# generate_dashboard_data.py wird gepusht, aber läuft nur lokal
