@@ -1,0 +1,59 @@
+# Railway/Nixpacks Konfiguration
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "npm run preview -- --host 0.0.0.0 --port $PORT"
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+.eggs/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Spark/BigData
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Lokale Ergebnisse (optional - diese NICHT pushen wenn zu groß)
+ergebnisse/
+
+# Persönliche Pfade (diese Datei nicht in Git!)
+# generate_dashboard_data.py wird gepusht, aber läuft nur lokal
+

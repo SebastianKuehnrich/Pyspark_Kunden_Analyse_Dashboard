@@ -1,0 +1,106 @@
+{
+  "maxDate": "2023-12-31",
+  "kundenGesamt": 49000,
+  "inaktiveVips": 22,
+  "verlorenerUmsatz": 3462987.73,
+  "reportUmsatz": [
+    {
+      "umsatz_segment": "VIP",
+      "anzahl_kunden": 49000.0,
+      "segment_umsatz": 6314903362.83,
+      "avg_umsatz": 128875.58
+    }
+  ],
+  "reportAktivitaet": [
+    {
+      "aktivitaet_segment": "Aktiv",
+      "anzahl_kunden": 48374.0,
+      "segment_umsatz": 6237774694.06
+    },
+    {
+      "aktivitaet_segment": "Inaktiv",
+      "anzahl_kunden": 626.0,
+      "segment_umsatz": 77128668.77
+    }
+  ],
+  "reportDach": [
+    {
+      "ist_dach_kunde": "Ja",
+      "anzahl_kunden": 49000.0,
+      "gesamt_umsatz": 6314903362.83,
+      "avg_umsatz": 128875.58
+    }
+  ],
+  "topInaktiveVips": [
+    {
+      "customer_id": 31424.0,
+      "gesamt_umsatz": 170310.72,
+      "anzahl_bestellungen": 128.0,
+      "letzte_bestellung": "2023-11-30",
+      "tage_inaktiv": 31.0
+    },
+    {
+      "customer_id": 36568.0,
+      "gesamt_umsatz": 168222.61,
+      "anzahl_bestellungen": 113.0,
+      "letzte_bestellung": "2023-11-23",
+      "tage_inaktiv": 38.0
+    },
+    {
+      "customer_id": 31083.0,
+      "gesamt_umsatz": 165380.8,
+      "anzahl_bestellungen": 110.0,
+      "letzte_bestellung": "2023-11-24",
+      "tage_inaktiv": 37.0
+    },
+    {
+      "customer_id": 26047.0,
+      "gesamt_umsatz": 164441.11,
+      "anzahl_bestellungen": 116.0,
+      "letzte_bestellung": "2023-11-27",
+      "tage_inaktiv": 34.0
+    },
+    {
+      "customer_id": 10753.0,
+      "gesamt_umsatz": 161572.44,
+      "anzahl_bestellungen": 117.0,
+      "letzte_bestellung": "2023-11-28",
+      "tage_inaktiv": 33.0
+    },
+    {
+      "customer_id": 20749.0,
+      "gesamt_umsatz": 160454.85,
+      "anzahl_bestellungen": 120.0,
+      "letzte_bestellung": "2023-11-27",
+      "tage_inaktiv": 34.0
+    },
+    {
+      "customer_id": 47780.0,
+      "gesamt_umsatz": 159131.92,
+      "anzahl_bestellungen": 112.0,
+      "letzte_bestellung": "2023-11-21",
+      "tage_inaktiv": 40.0
+    },
+    {
+      "customer_id": 26248.0,
+      "gesamt_umsatz": 158114.95,
+      "anzahl_bestellungen": 117.0,
+      "letzte_bestellung": "2023-11-26",
+      "tage_inaktiv": 35.0
+    },
+    {
+      "customer_id": 2129.0,
+      "gesamt_umsatz": 157254.26,
+      "anzahl_bestellungen": 118.0,
+      "letzte_bestellung": "2023-11-29",
+      "tage_inaktiv": 32.0
+    },
+    {
+      "customer_id": 23266.0,
+      "gesamt_umsatz": 157058.4,
+      "anzahl_bestellungen": 114.0,
+      "letzte_bestellung": "2023-11-26",
+      "tage_inaktiv": 35.0
+    }
+  ]
+}
