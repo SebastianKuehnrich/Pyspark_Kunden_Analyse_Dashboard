@@ -1,7 +1,8 @@
+python-3.11
 {
-  "name": "pyspark-dashboard",
+  "name": "kunden-dashboard-frontend",
   "version": "1.0.0",
-  "description": "Kunden-Analyse Dashboard mit React",
+  "description": "Kunden-Analyse Dashboard - React Frontend",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -21,3 +22,4 @@
     "start": "vite preview --host 0.0.0.0 --port ${PORT:-5173}"
   }
 }
+

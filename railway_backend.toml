@@ -1,0 +1,15 @@
+# Kunden-Analyse Dashboard - Backend
+# Flask API + PySpark
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "gunicorn --bind 0.0.0.0:$PORT backend_server:app"
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 10
+
+[env]
+FLASK_ENV = "production"
+PYTHONUNBUFFERED = "1"
+

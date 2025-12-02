@@ -63,6 +63,15 @@ $btnGenerate.ForeColor = [System.Drawing.Color]::White
 $btnGenerate.FlatStyle = "Flat"
 $form.Controls.Add($btnGenerate)
 
+# Fortschrittsbalken (initial unsichtbar)
+$progressBar = New-Object System.Windows.Forms.ProgressBar
+$progressBar.Location = New-Object System.Drawing.Point(50, 155)
+$progressBar.Size = New-Object System.Drawing.Size(380, 20)
+$progressBar.Style = "Marquee"
+$progressBar.MarqueeAnimationSpeed = 30
+$progressBar.Visible = $false
+$form.Controls.Add($progressBar)
+
 # Schritt 2: GitHub Push
 $labelStep2 = New-Object System.Windows.Forms.Label
 $labelStep2.Location = New-Object System.Drawing.Point(30, 170)
@@ -105,6 +114,7 @@ $form.Controls.Add($btnStart)
 $btnGenerate.Add_Click({
     $btnGenerate.Enabled = $false
     $btnGenerate.Text = "Generiere Daten..."
+    $progressBar.Visible = $true
 
     try {
         # PySpark Script ausführen
@@ -126,6 +136,8 @@ $btnGenerate.Add_Click({
         Show-MessageBox -Message "Fehler: $_" -Title "Fehler" -Icon Error
         $btnGenerate.Enabled = $true
         $btnGenerate.Text = "Daten mit PySpark generieren"
+    } finally {
+        $progressBar.Visible = $false
     }
 })
 

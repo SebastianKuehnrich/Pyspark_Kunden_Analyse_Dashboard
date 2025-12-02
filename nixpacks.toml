@@ -1,15 +1,25 @@
-# Railway/Nixpacks Konfiguration
+# Railway/Nixpacks Konfiguration - Vollstack (Backend + Frontend)
+# Für separates Deployment nutze nixpacks_backend.toml oder nixpacks_frontend.toml
+
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["python311", "openjdk17", "nodejs_20"]
 
 [phases.install]
-cmds = ["npm install"]
+cmds = [
+  "pip install -r backend_requirements.txt",
+  "npm ci"
+]
 
 [phases.build]
 cmds = ["npm run build"]
 
 [start]
-cmd = "npm run preview -- --host 0.0.0.0 --port $PORT"
+cmd = "gunicorn --bind 0.0.0.0:$PORT --timeout 300 --workers 2 backend_server:app"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+NODE_ENV = "production"
+
 # Dependencies
 node_modules/
 package-lock.json
@@ -56,4 +66,3 @@ ergebnisse/
 
 # Persönliche Pfade (diese Datei nicht in Git!)
 # generate_dashboard_data.py wird gepusht, aber läuft nur lokal
-
