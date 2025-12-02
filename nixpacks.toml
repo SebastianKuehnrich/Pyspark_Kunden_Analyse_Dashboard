@@ -1,14 +1,14 @@
 # Railway/Nixpacks Konfiguration - Monorepo (Frontend + Backend)
 # WICHTIG: Für Railway sollten separate Services mit Root Directory verwendet werden!
-# Frontend Service: Root Directory = "frontend"
-# Backend Service: Root Directory = "backend"
+# Frontend Service: Root Directory = "frontend" (nutzt frontend/nixpacks.toml)
+# Backend Service: Eigenes Repository (nutzt backend/nixpacks.toml)
 
 [phases.setup]
 nixPkgs = ["python311", "python311Packages.pip", "openjdk17", "nodejs_20"]
 
 [phases.install]
 cmds = [
-  "pip install --no-cache-dir -r backend/backend_requirements.txt",
+  "pip install --no-cache-dir -r backend/backend_requirements.txt --break-system-packages",
   "cd frontend && npm ci"
 ]
 
@@ -16,7 +16,7 @@ cmds = [
 cmds = ["cd frontend && npm run build"]
 
 [start]
-cmd = "npm run preview -- --host 0.0.0.0 --port $PORT"
+cmd = "cd frontend && npm run preview -- --host 0.0.0.0 --port $PORT"
 
 [variables]
 NODE_ENV = "production"
