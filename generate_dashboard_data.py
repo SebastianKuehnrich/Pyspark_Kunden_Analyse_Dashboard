@@ -171,30 +171,75 @@ kunden_segmentiert = kunden_master \
 
 print("[6/7] Erstelle Reports...")
 
-# REPORT 1: Umsatz nach Segment
-report_umsatz = kunden_segmentiert.groupBy("umsatz_segment").agg(
+# Gesamtumsatz für Pareto-Analyse berechnen
+total_umsatz = kunden_segmentiert.agg(_sum("gesamt_umsatz")).collect()[0][0]
+
+# REPORT 1: Umsatz nach Segment (KORRIGIERT: Nach Wert sortiert + Pareto-Analyse)
+report_umsatz_raw = kunden_segmentiert.groupBy("umsatz_segment").agg(
+    count("*").alias("anzahl_kunden"),
+    spark_round(_sum("gesamt_umsatz"), 2).alias("segment_umsatz"),
+    spark_round(avg("gesamt_umsatz"), 2).alias("avg_umsatz")
+)
+
+# Füge Umsatzanteil hinzu (Pareto-Analyse)
+report_umsatz = report_umsatz_raw.withColumn(
+    "umsatz_anteil_prozent",
+    spark_round((col("segment_umsatz") / lit(total_umsatz)) * 100, 2)
+).orderBy(desc("avg_umsatz"))  # WICHTIG: Nach Durchschnittsumsatz sortieren!
+
+print("   📊 Umsatzverteilung (Pareto-Check):")
+for row in report_umsatz.collect():
+    print(f"      {row['umsatz_segment']:10} → {row['umsatz_anteil_prozent']:5.1f}% des Gesamtumsatzes")
+
+# REPORT 2: Aktivität nach Segment
+report_aktivitaet = kunden_segmentiert.groupBy("aktivitaet_segment").agg(
     count("*").alias("anzahl_kunden"),
     spark_round(_sum("gesamt_umsatz"), 2).alias("segment_umsatz"),
     spark_round(avg("gesamt_umsatz"), 2).alias("avg_umsatz")
 ).orderBy(desc("segment_umsatz"))
 
-# REPORT 2: Aktivität nach Segment
-report_aktivitaet = kunden_segmentiert.groupBy("aktivitaet_segment").agg(
-    count("*").alias("anzahl_kunden"),
-    spark_round(_sum("gesamt_umsatz"), 2).alias("segment_umsatz")
-).orderBy(desc("segment_umsatz"))
+# REPORT 3: Top 10 Länder (statt DACH/Nicht-DACH)
+print("   🌍 Analysiere Länder-Verteilung...")
+report_laender = df.groupBy("country").agg(
+    count("customer_id").alias("anzahl_bestellungen"),
+    spark_round(_sum("total"), 2).alias("gesamt_umsatz")
+).orderBy(desc("gesamt_umsatz")).limit(10)
 
-# REPORT 3: DACH vs International
+# Alte DACH-Analyse für Kompatibilität behalten (aber als deprecated markieren)
 report_dach = kunden_segmentiert.groupBy("ist_dach_kunde").agg(
     count("*").alias("anzahl_kunden"),
     spark_round(_sum("gesamt_umsatz"), 2).alias("gesamt_umsatz"),
     spark_round(avg("gesamt_umsatz"), 2).alias("avg_umsatz")
 )
 
-# REPORT 4: Inaktive VIP-Kunden (>30 Tage)
-vip_threshold = kunden_segmentiert.approxQuantile("gesamt_umsatz", [0.9], 0.0)[0]
-vip_kunden = kunden_segmentiert.filter(col("gesamt_umsatz") >= vip_threshold)
-inaktive_vips = vip_kunden.filter(col("tage_inaktiv") > 30)
+# REPORT 4: Inaktive VIP-Kunden - VERBESSERT
+# Nutze das bereits definierte Segment statt neu zu berechnen
+inaktive_vips = kunden_segmentiert.filter(
+    (col("umsatz_segment") == "VIP") &
+    (col("tage_inaktiv") > 30)
+)
+
+# Berechne erwarteten Jahresumsatz der inaktiven VIPs
+if inaktive_vips.count() > 0:
+    # Durchschnittliche Aktivitätsdauer in Jahren
+    inaktive_vips_mit_jahre = inaktive_vips.withColumn(
+        "jahre_aktiv",
+        datediff(col("letzte_bestellung"), col("erste_bestellung")) / 365.25
+    ).withColumn(
+        "umsatz_pro_jahr",
+        spark_round(
+            when(col("jahre_aktiv") > 0, col("gesamt_umsatz") / col("jahre_aktiv"))
+            .otherwise(col("gesamt_umsatz")),
+            2
+        )
+    )
+
+    # Erwarteter Verlust (vereinfachte Annahme: 50% Reaktivierungsrate)
+    erwarteter_verlust_pro_jahr = inaktive_vips_mit_jahre.agg(
+        spark_round(_sum("umsatz_pro_jahr") * 0.5, 2)  # 50% kommen nicht zurück
+    ).collect()[0][0]
+else:
+    erwarteter_verlust_pro_jahr = 0.0
 
 top_inaktive_vips = inaktive_vips.select(
     "customer_id",

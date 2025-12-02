@@ -316,6 +316,7 @@ const Dashboard = ({ data }) => {
               <th>Anzahl Kunden</th>
               <th>Gesamt-Umsatz</th>
               <th>Durchschnitt</th>
+              <th>Umsatzanteil %</th>
             </tr>
           </thead>
           <tbody>
@@ -325,6 +326,11 @@ const Dashboard = ({ data }) => {
                 <td>{row.anzahl_kunden.toLocaleString('de-DE')}</td>
                 <td>{row.segment_umsatz.toLocaleString('de-DE', { minimumFractionDigits: 2 })} EUR</td>
                 <td>{row.avg_umsatz.toLocaleString('de-DE', { minimumFractionDigits: 2 })} EUR</td>
+                <td>
+                  <strong style={{ color: row.umsatz_anteil_prozent > 30 ? '#28a745' : '#666' }}>
+                    {row.umsatz_anteil_prozent ? row.umsatz_anteil_prozent.toFixed(1) : '0.0'}%
+                  </strong>
+                </td>
               </tr>
             ))}
           </tbody>
