@@ -1,5 +1,11 @@
+# Backend Requirements
+# Flask + PySpark + Gunicorn für Railway
+
 Flask==3.0.0
 Flask-CORS==4.0.0
 pyspark==3.5.0
 pandas==2.1.4
 gunicorn==21.2.0
+
+# Zusätzliche Dependencies für Production
+python-dotenv==1.0.0
