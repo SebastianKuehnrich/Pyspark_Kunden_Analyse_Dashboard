@@ -1,20 +1,12 @@
 # Root .gitignore für Monorepo
 
+# Backend-Ordner (hat eigenes Repository!)
+backend/
+
 # Frontend Build Artifacts
 frontend/node_modules/
 frontend/dist/
 frontend/build/
-# frontend/package-lock.json  ← AUSKOMMENTIERT!
-
-# Backend Python
-backend/__pycache__/
-backend/*.pyc
-backend/venv/
-backend/env/
-backend/uploads/
-backend/spark-warehouse/
-backend/metastore_db/
-backend/derby.log
 
 # Shared Data (wird lokal generiert)
 data.json
@@ -43,12 +35,9 @@ Thumbs.db
 *.ps1
 *.vbs
 
-# Alte Root-Dateien (nach Migration zu frontend/backend)
-App.jsx
-Dashboard.jsx
-CSVUpload.jsx
-main.jsx
-index.html
-vite.config.js
-backend_server.py
-generate_dashboard_data.py
+# Temporäre/Alte Dateien
+railway.json
+nixpacks_backend.toml
+nixpacks_frontend.toml
+runtime.txt
+index.js
