@@ -558,7 +558,7 @@ const Dashboard = ({ data: initialData }) => {
           onChange={(e) => setSearchVIP(e.target.value)}
         />
         <button className="download-btn" onClick={downloadVipsReport}>
-          📥 CSV Export Top 10 Inaktive VIPs
+          📥 CSV Export Top 30 Inaktive VIPs
         </button>
         <table>
           <thead>
