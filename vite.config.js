@@ -6,11 +6,21 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0',
-    port: process.env.PORT || 5173
+    port: process.env.PORT || 5173,
+    strictPort: false,
+    hmr: {
+      clientPort: process.env.PORT || 5173
+    }
   },
   preview: {
     host: '0.0.0.0',
-    port: process.env.PORT || 5173
+    port: process.env.PORT || 5173,
+    strictPort: false,
+    allowedHosts: [
+      '.railway.app',
+      '.up.railway.app',
+      'pysparkkundenanalysedashboard-production.up.railway.app'
+    ]
   },
   build: {
     outDir: 'dist',
