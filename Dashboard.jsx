@@ -237,6 +237,82 @@ const Dashboard = ({ data }) => {
     }
   };
 
+  // Chart 4: Länder-Analyse (dynamisch je nach Toggle)
+  const laenderChartData = {
+    labels: showDachLaender
+      ? (reportDachLaender || []).map(row => row.country)
+      : (reportAndereLaender || []).map(row => row.country),
+    datasets: [{
+      label: 'Umsatz in EUR',
+      data: showDachLaender
+        ? (reportDachLaender || []).map(row => row.gesamt_umsatz)
+        : (reportAndereLaender || []).map(row => row.gesamt_umsatz),
+      backgroundColor: showDachLaender
+        ? [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)'
+          ]
+        : [
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)',
+            'rgba(201, 203, 207, 0.8)'
+          ],
+      borderColor: showDachLaender
+        ? [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+          ]
+        : [
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(201, 203, 207, 1)'
+          ],
+      borderWidth: 2
+    }]
+  };
+
+  const laenderChartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 2,
+    plugins: {
+      title: {
+        display: true,
+        text: showDachLaender ? 'DACH Top 3 Länder' : 'Top 10 Andere Länder',
+        font: { size: 18 }
+      },
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return value.toLocaleString('de-DE') + ' €';
+          }
+        }
+      }
+    }
+  };
+
   // Filter Funktionen
   const filteredUmsatz = reportUmsatz.filter(row =>
     filterUmsatz === '' || row.umsatz_segment === filterUmsatz
@@ -409,7 +485,7 @@ const Dashboard = ({ data }) => {
         </h2>
         {showChart3 && (
           <div className="chart-container active">
-            <Bar data={dachChartData} options={dachChartOptions} />
+            <Bar data={laenderChartData} options={laenderChartOptions} />
           </div>
         )}
         <div style={{ margin: '10px 0' }}>
