@@ -55,6 +55,40 @@
       "avg_umsatz": 128875.58
     }
   ],
+  "reportDachLaender": [
+    {
+      "country": "Germany",
+      "anzahl_bestellungen": 1000903.0,
+      "gesamt_umsatz": 1264330082.63,
+      "avg_bestellung": 1263.19
+    },
+    {
+      "country": "Switzerland",
+      "anzahl_bestellungen": 999759.0,
+      "gesamt_umsatz": 1262186111.69,
+      "avg_bestellung": 1262.49
+    },
+    {
+      "country": "Austria",
+      "anzahl_bestellungen": 997742.0,
+      "gesamt_umsatz": 1259422943.76,
+      "avg_bestellung": 1262.27
+    }
+  ],
+  "reportAndereLaender": [
+    {
+      "country": "Belgium",
+      "anzahl_bestellungen": 1001492.0,
+      "gesamt_umsatz": 1266596188.5,
+      "avg_bestellung": 1264.71
+    },
+    {
+      "country": "Netherlands",
+      "anzahl_bestellungen": 1000104.0,
+      "gesamt_umsatz": 1262368036.25,
+      "avg_bestellung": 1262.24
+    }
+  ],
   "topInaktiveVips": [
     {
       "customer_id": 31424.0,

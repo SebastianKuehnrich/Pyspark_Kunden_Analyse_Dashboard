@@ -200,10 +200,36 @@ report_aktivitaet = kunden_segmentiert.groupBy("aktivitaet_segment").agg(
 
 # REPORT 3: Top 10 Länder (statt DACH/Nicht-DACH)
 print("   🌍 Analysiere Länder-Verteilung...")
-report_laender = df.groupBy("country").agg(
+
+# DACH Top 3 (Deutschland, Österreich, Schweiz)
+report_dach_laender = df.filter(
+    (col("country") == "Germany") |
+    (col("country") == "Austria") |
+    (col("country") == "Switzerland")
+).groupBy("country").agg(
     count("customer_id").alias("anzahl_bestellungen"),
-    spark_round(_sum("total"), 2).alias("gesamt_umsatz")
+    spark_round(_sum("total"), 2).alias("gesamt_umsatz"),
+    spark_round(avg("total"), 2).alias("avg_bestellung")
+).orderBy(desc("gesamt_umsatz"))
+
+print("   🇩🇪🇦🇹🇨🇭 DACH Top 3:")
+for row in report_dach_laender.collect():
+    print(f"      {row['country']:15} → {row['gesamt_umsatz']:,.2f} EUR")
+
+# Top 10 andere Länder (NICHT DACH)
+report_andere_laender = df.filter(
+    (col("country") != "Germany") &
+    (col("country") != "Austria") &
+    (col("country") != "Switzerland")
+).groupBy("country").agg(
+    count("customer_id").alias("anzahl_bestellungen"),
+    spark_round(_sum("total"), 2).alias("gesamt_umsatz"),
+    spark_round(avg("total"), 2).alias("avg_bestellung")
 ).orderBy(desc("gesamt_umsatz")).limit(10)
+
+print("   🌍 Top 10 andere Länder:")
+for row in report_andere_laender.collect():
+    print(f"      {row['country']:15} → {row['gesamt_umsatz']:,.2f} EUR")
 
 # Alte DACH-Analyse für Kompatibilität behalten (aber als deprecated markieren)
 report_dach = kunden_segmentiert.groupBy("ist_dach_kunde").agg(
@@ -279,6 +305,8 @@ def row_to_dict(row):
 report_umsatz_list = [row_to_dict(row) for row in report_umsatz.collect()]
 report_aktivitaet_list = [row_to_dict(row) for row in report_aktivitaet.collect()]
 report_dach_list = [row_to_dict(row) for row in report_dach.collect()]
+report_dach_laender_list = [row_to_dict(row) for row in report_dach_laender.collect()]
+report_andere_laender_list = [row_to_dict(row) for row in report_andere_laender.collect()]
 top_inaktive_vips_list = [row_to_dict(row) for row in top_inaktive_vips.collect()]
 
 # Dashboard-Daten Struktur
@@ -290,6 +318,8 @@ dashboard_data = {
     "reportUmsatz": report_umsatz_list,
     "reportAktivitaet": report_aktivitaet_list,
     "reportDach": report_dach_list,
+    "reportDachLaender": report_dach_laender_list,
+    "reportAndereLaender": report_andere_laender_list,
     "topInaktiveVips": top_inaktive_vips_list
 }
 

@@ -31,6 +31,7 @@ const Dashboard = ({ data }) => {
   const [filterUmsatz, setFilterUmsatz] = useState('');
   const [filterAktivitaet, setFilterAktivitaet] = useState('');
   const [searchVIP, setSearchVIP] = useState('');
+  const [showDachLaender, setShowDachLaender] = useState(true); // Toggle für DACH vs Andere Länder
 
   // Daten aus props (werden von Python generiert)
   const {
@@ -41,6 +42,8 @@ const Dashboard = ({ data }) => {
     reportUmsatz,
     reportAktivitaet,
     reportDach,
+    reportDachLaender,
+    reportAndereLaender,
     topInaktiveVips
   } = data;
 
@@ -393,10 +396,10 @@ const Dashboard = ({ data }) => {
         </table>
       </div>
 
-      {/* DACH vs International */}
+      {/* Länder-Analyse */}
       <div className="card">
         <h2>
-          <span>DACH vs International</span>
+          <span>Länder-Analyse</span>
           <button
             className={`toggle-btn ${showChart3 ? 'active' : ''}`}
             onClick={() => setShowChart3(!showChart3)}
@@ -409,27 +412,51 @@ const Dashboard = ({ data }) => {
             <Bar data={dachChartData} options={dachChartOptions} />
           </div>
         )}
+        <div style={{ margin: '10px 0' }}>
+          <button
+            onClick={() => setShowDachLaender(true)}
+            className={`toggle-btn ${showDachLaender ? 'active' : ''}`}
+            style={{ marginRight: '10px' }}
+          >
+            🇩🇪🇦🇹🇨🇭 DACH Top 3
+          </button>
+          <button
+            onClick={() => setShowDachLaender(false)}
+            className={`toggle-btn ${!showDachLaender ? 'active' : ''}`}
+          >
+            🌍 Top 10 Andere Länder
+          </button>
+        </div>
         <button className="download-btn" onClick={downloadDachReport}>
-          📥 CSV Export DACH vs International
+          📥 CSV Export Länder
         </button>
         <table>
           <thead>
             <tr>
-              <th>Region</th>
-              <th>Anzahl Kunden</th>
+              <th>Land</th>
+              <th>Bestellungen</th>
               <th>Gesamt-Umsatz</th>
-              <th>Durchschnitt</th>
+              <th>Ø Bestellung</th>
             </tr>
           </thead>
           <tbody>
-            {reportDach.map((row, index) => (
-              <tr key={index}>
-                <td>{row.ist_dach_kunde}</td>
-                <td>{row.anzahl_kunden.toLocaleString('de-DE')}</td>
-                <td>{row.gesamt_umsatz.toLocaleString('de-DE', { minimumFractionDigits: 2 })} EUR</td>
-                <td>{row.avg_umsatz.toLocaleString('de-DE', { minimumFractionDigits: 2 })} EUR</td>
-              </tr>
-            ))}
+            {showDachLaender
+              ? (reportDachLaender || []).map((row, index) => (
+                <tr key={index}>
+                  <td><strong>{row.country}</strong></td>
+                  <td>{row.anzahl_bestellungen?.toLocaleString('de-DE') || '0'}</td>
+                  <td>{row.gesamt_umsatz?.toLocaleString('de-DE', { minimumFractionDigits: 2 }) || '0.00'} EUR</td>
+                  <td>{row.avg_bestellung?.toLocaleString('de-DE', { minimumFractionDigits: 2 }) || '0.00'} EUR</td>
+                </tr>
+              ))
+              : (reportAndereLaender || []).map((row, index) => (
+                <tr key={index}>
+                  <td><strong>{row.country}</strong></td>
+                  <td>{row.anzahl_bestellungen?.toLocaleString('de-DE') || '0'}</td>
+                  <td>{row.gesamt_umsatz?.toLocaleString('de-DE', { minimumFractionDigits: 2 }) || '0.00'} EUR</td>
+                  <td>{row.avg_bestellung?.toLocaleString('de-DE', { minimumFractionDigits: 2 }) || '0.00'} EUR</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
