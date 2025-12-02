@@ -44,6 +44,71 @@ const Dashboard = ({ data }) => {
     topInaktiveVips
   } = data;
 
+  // CSV Download Funktionen
+  const downloadCSV = (data, filename, headers) => {
+    // CSV Header erstellen
+    const csvHeaders = headers.join(',') + '\n';
+
+    // CSV Rows erstellen
+    const csvRows = data.map(row => {
+      return headers.map(header => {
+        const value = row[header];
+        // Zahlen formatieren und Strings escapen
+        if (typeof value === 'number') {
+          return value;
+        }
+        return `"${value}"`;
+      }).join(',');
+    }).join('\n');
+
+    const csvContent = csvHeaders + csvRows;
+
+    // Blob erstellen und Download triggern
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Spezifische Download-Funktionen
+  const downloadUmsatzReport = () => {
+    downloadCSV(
+      filteredUmsatz,
+      'report_umsatz_segment.csv',
+      ['umsatz_segment', 'anzahl_kunden', 'segment_umsatz', 'avg_umsatz']
+    );
+  };
+
+  const downloadAktivitaetReport = () => {
+    downloadCSV(
+      filteredAktivitaet,
+      'report_aktivitaet.csv',
+      ['aktivitaet_segment', 'anzahl_kunden', 'segment_umsatz']
+    );
+  };
+
+  const downloadDachReport = () => {
+    downloadCSV(
+      reportDach,
+      'report_dach.csv',
+      ['ist_dach_kunde', 'anzahl_kunden', 'gesamt_umsatz', 'avg_umsatz']
+    );
+  };
+
+  const downloadVipsReport = () => {
+    downloadCSV(
+      filteredVips,
+      'top_inaktive_vips.csv',
+      ['customer_id', 'gesamt_umsatz', 'anzahl_bestellungen', 'letzte_bestellung', 'tage_inaktiv']
+    );
+  };
+
   // Chart 1: Umsatz nach Segment
   const umsatzChartData = {
     labels: reportUmsatz.map(row => row.umsatz_segment),
@@ -241,6 +306,9 @@ const Dashboard = ({ data }) => {
             <option value="Gering">Gering</option>
           </select>
         </div>
+        <button className="download-btn" onClick={downloadUmsatzReport}>
+          📥 CSV Export Umsatz nach Segment
+        </button>
         <table>
           <thead>
             <tr>
@@ -296,6 +364,9 @@ const Dashboard = ({ data }) => {
             <option value="Verloren">Verloren</option>
           </select>
         </div>
+        <button className="download-btn" onClick={downloadAktivitaetReport}>
+          📥 CSV Export Aktivität
+        </button>
         <table>
           <thead>
             <tr>
@@ -332,6 +403,9 @@ const Dashboard = ({ data }) => {
             <Bar data={dachChartData} options={dachChartOptions} />
           </div>
         )}
+        <button className="download-btn" onClick={downloadDachReport}>
+          📥 CSV Export DACH vs International
+        </button>
         <table>
           <thead>
             <tr>
@@ -364,6 +438,9 @@ const Dashboard = ({ data }) => {
           value={searchVIP}
           onChange={(e) => setSearchVIP(e.target.value)}
         />
+        <button className="download-btn" onClick={downloadVipsReport}>
+          📥 CSV Export Top 10 Inaktive VIPs
+        </button>
         <table>
           <thead>
             <tr>

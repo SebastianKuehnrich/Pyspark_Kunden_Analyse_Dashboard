@@ -5,10 +5,28 @@
   "verlorenerUmsatz": 3462987.73,
   "reportUmsatz": [
     {
+      "umsatz_segment": "Standard",
+      "anzahl_kunden": 19288.0,
+      "segment_umsatz": 2474190574.36,
+      "avg_umsatz": 128276.16
+    },
+    {
+      "umsatz_segment": "Gering",
+      "anzahl_kunden": 14668.0,
+      "segment_umsatz": 1614404925.93,
+      "avg_umsatz": 110063.06
+    },
+    {
+      "umsatz_segment": "Premium",
+      "anzahl_kunden": 9686.0,
+      "segment_umsatz": 1379422927.54,
+      "avg_umsatz": 142414.1
+    },
+    {
       "umsatz_segment": "VIP",
-      "anzahl_kunden": 49000.0,
-      "segment_umsatz": 6314903362.83,
-      "avg_umsatz": 128875.58
+      "anzahl_kunden": 5358.0,
+      "segment_umsatz": 846884935.0,
+      "avg_umsatz": 158059.9
     }
   ],
   "reportAktivitaet": [

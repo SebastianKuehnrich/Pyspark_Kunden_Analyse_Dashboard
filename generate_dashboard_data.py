@@ -132,6 +132,19 @@ print("[5/7] Segmentiere Kunden...")
 max_date = df.agg(_max("date")).collect()[0][0]
 print(f"   Letztes Datum im Datensatz: {max_date}")
 
+# Dynamische Schwellenwerte berechnen (basierend auf Quantilen)
+# VIP = Top 10%, Premium = 10-30%, Standard = 30-70%, Gering = Bottom 30%
+quantiles = kunden_master.approxQuantile("gesamt_umsatz", [0.3, 0.7, 0.9], 0.01)
+schwelle_gering = quantiles[0]      # 30% Quantil
+schwelle_standard = quantiles[1]    # 70% Quantil
+schwelle_premium = quantiles[2]     # 90% Quantil
+
+print(f"   Schwellenwerte:")
+print(f"   - VIP (Top 10%):      >= {schwelle_premium:,.2f} EUR")
+print(f"   - Premium (10-30%):   >= {schwelle_standard:,.2f} EUR")
+print(f"   - Standard (30-70%):  >= {schwelle_gering:,.2f} EUR")
+print(f"   - Gering (Bottom 30%): <  {schwelle_gering:,.2f} EUR")
+
 # Segmente hinzufügen
 kunden_segmentiert = kunden_master \
     .withColumn(
@@ -140,9 +153,9 @@ kunden_segmentiert = kunden_master \
     ) \
     .withColumn(
         "umsatz_segment",
-        when(col("gesamt_umsatz") >= 5000, "VIP")
-        .when(col("gesamt_umsatz") >= 1000, "Premium")
-        .when(col("gesamt_umsatz") >= 200, "Standard")
+        when(col("gesamt_umsatz") >= schwelle_premium, "VIP")
+        .when(col("gesamt_umsatz") >= schwelle_standard, "Premium")
+        .when(col("gesamt_umsatz") >= schwelle_gering, "Standard")
         .otherwise("Gering")
     ) \
     .withColumn(
@@ -241,6 +254,59 @@ with open(output_path, 'w', encoding='utf-8') as f:
     json.dump(dashboard_data, f, indent=2, ensure_ascii=False, default=str)
 
 print(f"\n✅ Dashboard-Daten erfolgreich generiert: {output_path}")
+
+# ============================================================
+# CSV EXPORT: Reports als CSV speichern
+# ============================================================
+
+print("\n" + "=" * 60)
+print("   CSV EXPORT: Ergebnisse speichern")
+print("=" * 60)
+
+# Ordner für Ergebnisse erstellen
+os.makedirs("./ergebnisse", exist_ok=True)
+
+# Report 1: Umsatz nach Segment
+report_umsatz.toPandas().to_csv(
+    "./ergebnisse/report_umsatz_segment.csv",
+    index=False
+)
+print("✅ Gespeichert: ./ergebnisse/report_umsatz_segment.csv")
+
+# Report 2: Aktivität nach Segment
+report_aktivitaet.toPandas().to_csv(
+    "./ergebnisse/report_aktivitaet.csv",
+    index=False
+)
+print("✅ Gespeichert: ./ergebnisse/report_aktivitaet.csv")
+
+# Report 3: DACH vs International
+report_dach.toPandas().to_csv(
+    "./ergebnisse/report_dach.csv",
+    index=False
+)
+print("✅ Gespeichert: ./ergebnisse/report_dach.csv")
+
+# Report 4: Top Inaktive VIPs
+top_inaktive_vips.toPandas().to_csv(
+    "./ergebnisse/top_inaktive_vips.csv",
+    index=False
+)
+print("✅ Gespeichert: ./ergebnisse/top_inaktive_vips.csv")
+
+# Bonus: Kunden-Sample (erste 1000 segmentierte Kunden)
+kunden_segmentiert.limit(1000).toPandas().to_csv(
+    "./ergebnisse/kunden_sample.csv",
+    index=False
+)
+print("✅ Gespeichert: ./ergebnisse/kunden_sample.csv (1000 Zeilen)")
+
+print("\n📁 Alle CSV-Reports gespeichert in: ./ergebnisse/")
+
+# ============================================================
+# ZUSAMMENFASSUNG
+# ============================================================
+
 print("\n" + "=" * 60)
 print("   ZUSAMMENFASSUNG")
 print("=" * 60)
