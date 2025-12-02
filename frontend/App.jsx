@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './Dashboard';
 
+// API-URL dynamisch setzen
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 // Fallback-Daten falls data.json nicht vorhanden
 const fallbackData = {
   maxDate: new Date().toISOString().split('T')[0],
@@ -21,15 +24,18 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Versuche data.json zu laden
-    fetch('./data.json')
-      .then(response => response.json())
+    // Versuche Daten vom Backend zu laden
+    fetch(`${API_URL}/api/data`)
+      .then(response => {
+        if (!response.ok) throw new Error('Backend hat keine Daten');
+        return response.json();
+      })
       .then(jsonData => {
         setData(jsonData);
         setLoading(false);
       })
       .catch(error => {
-        console.warn('data.json nicht gefunden, verwende Fallback-Daten', error);
+        console.warn('Backend-Daten nicht verfügbar, verwende Fallback-Daten', error);
         setLoading(false);
       });
   }, []);

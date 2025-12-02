@@ -6,6 +6,9 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   plugins: [react()],
   root: process.cwd(),
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:5000')
+  },
   server: {
     host: '0.0.0.0',
     port: process.env.PORT || 5173,
