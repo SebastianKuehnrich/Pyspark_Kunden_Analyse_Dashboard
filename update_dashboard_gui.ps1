@@ -195,35 +195,103 @@ $btnPush.Add_Click({
         $date = Get-Date -Format "dd.MM.yyyy"
         $commitMessage = "Update: Neue E-Commerce Daten - $date"
 
-        # Git Befehle ausführen
+        # Git Befehle in sichtbarem CMD-Fenster ausführen
         $btnPush.Text = "Pushe zu GitHub..."
         $btnPush.Enabled = $false
 
+        # Temporäre BAT-Datei erstellen für Git-Befehle
+        $tempBat = [System.IO.Path]::GetTempFileName() + ".bat"
+        $batContent = @"
+@echo off
+echo ========================================
+echo   GitHub Push
+echo ========================================
+echo.
+echo Repository: $repoName
+echo Commit: $commitMessage
+echo.
+echo [1/3] Stage alle Aenderungen...
+git add .
+echo.
+echo [2/3] Erstelle Commit...
+git commit -m "$commitMessage"
+if %ERRORLEVEL% EQU 0 (
+    echo.
+    echo [3/3] Push zu GitHub...
+    git push origin main
+    if %ERRORLEVEL% EQU 0 (
+        echo.
+        echo ========================================
+        echo   ERFOLG!
+        echo ========================================
+        echo.
+        echo Erfolgreich zu GitHub gepusht!
+        echo Repository: $repoName
+        echo Branch: main
+        echo.
+        echo SUCCESS > "$env:TEMP\git_push_result.txt"
+    ) else (
+        echo.
+        echo ========================================
+        echo   FEHLER BEIM PUSH!
+        echo ========================================
+        echo.
+        echo PUSH_ERROR > "$env:TEMP\git_push_result.txt"
+    )
+) else (
+    echo.
+    echo ========================================
+    echo   KEINE AENDERUNGEN
+    echo ========================================
+    echo.
+    echo Alle Dateien sind bereits aktuell.
+    echo.
+    echo NO_CHANGES > "$env:TEMP\git_push_result.txt"
+)
+echo.
+echo Druecke eine beliebige Taste zum Schliessen...
+pause > nul
+"@
+        [System.IO.File]::WriteAllText($tempBat, $batContent)
+
         try {
-            # Git add
-            git add .
+            # Lösche alte Result-Datei falls vorhanden
+            $resultFile = "$env:TEMP\git_push_result.txt"
+            if (Test-Path $resultFile) {
+                Remove-Item $resultFile -Force
+            }
 
-            # Git commit
-            $commitResult = git commit -m $commitMessage 2>&1
+            # Führe BAT-Datei aus (sichtbares Fenster)
+            $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$tempBat`"" -Wait -PassThru
 
-            if ($LASTEXITCODE -eq 0) {
-                # Git push
-                $pushResult = git push origin main 2>&1
+            # Prüfe Ergebnis
+            if (Test-Path $resultFile) {
+                $result = Get-Content $resultFile -Raw
 
-                if ($LASTEXITCODE -eq 0) {
+                if ($result -match "SUCCESS") {
                     Show-MessageBox -Message "Erfolgreich zu GitHub gepusht!`n`nRepository: $repoName`nBranch: main`nCommit: $commitMessage" -Title "Erfolg" -Icon Information
                     $btnPush.Text = "[OK] Zu GitHub gepusht"
                     $btnPush.BackColor = [System.Drawing.Color]::FromArgb(40, 167, 69)
-                } else {
-                    Show-MessageBox -Message "Fehler beim Push!`n`n$pushResult" -Title "Push Fehler" -Icon Error
+                } elseif ($result -match "NO_CHANGES") {
+                    Show-MessageBox -Message "Keine Aenderungen zum Committen.`n`nAlle Dateien sind bereits auf dem neuesten Stand." -Title "Info" -Icon Information
+                    $btnPush.Text = "[OK] Bereits aktuell"
+                    $btnPush.BackColor = [System.Drawing.Color]::FromArgb(108, 117, 125)
+                } elseif ($result -match "PUSH_ERROR") {
+                    Show-MessageBox -Message "Fehler beim Push!`n`nBitte pruefe:`n- Git Credentials (GitHub Login)`n- Internet-Verbindung`n- Repository-Berechtigung" -Title "Push Fehler" -Icon Error
                     $btnPush.Text = "Zu GitHub pushen"
                     $btnPush.Enabled = $true
                 }
+
+                # Lösche Result-Datei
+                Remove-Item $resultFile -Force
             } else {
-                Show-MessageBox -Message "Keine Aenderungen zum Committen.`n`nAlle Dateien sind bereits auf dem neuesten Stand." -Title "Info" -Icon Information
-                $btnPush.Text = "[OK] Bereits aktuell"
-                $btnPush.BackColor = [System.Drawing.Color]::FromArgb(108, 117, 125)
+                Show-MessageBox -Message "Git-Befehle wurden ausgefuehrt.`n`nBitte pruefe das CMD-Fenster fuer Details." -Title "Info" -Icon Information
+                $btnPush.Text = "Zu GitHub pushen"
+                $btnPush.Enabled = $true
             }
+
+            # Lösche temporäre BAT-Datei
+            Remove-Item $tempBat -Force
         } catch {
             Show-MessageBox -Message "Git Fehler: $_" -Title "Fehler" -Icon Error
             $btnPush.Text = "Zu GitHub pushen"
