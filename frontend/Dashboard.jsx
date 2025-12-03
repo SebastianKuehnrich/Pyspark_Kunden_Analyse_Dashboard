@@ -35,6 +35,13 @@ const Dashboard = ({ data: initialData }) => {
   const [searchVIP, setSearchVIP] = useState('');
   const [showDachLaender, setShowDachLaender] = useState(true);
 
+  // Heutiges Datum formatieren
+  const today = new Date().toLocaleDateString('de-DE', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
   // Callback wenn neue Daten hochgeladen wurden
   const handleDataUpdated = (newData) => {
     setData(newData);
@@ -339,7 +346,7 @@ const Dashboard = ({ data: initialData }) => {
         <span>Kunden-Analyse Dashboard</span>
         <span className="author">erstellt von Sebastian</span>
       </h1>
-      <p><strong>Erstellt mit PySpark | Tag 6: JOINs | {maxDate}</strong></p>
+      <p><strong>Erstellt mit PySpark | JOINs | {today}</strong></p>
 
       {/* Übersicht */}
       <div className="card">
@@ -547,9 +554,9 @@ const Dashboard = ({ data: initialData }) => {
         </table>
       </div>
 
-      {/* Top 10 Inaktive VIP-Kunden */}
+      {/* Top Inaktive VIP-Kunden */}
       <div className="card">
-        <h2>Top 10 Inaktive VIP-Kunden</h2>
+        <h2>Top Inaktive VIP-Kunden</h2>
         <input
           type="text"
           className="search-box"
